@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +197,7 @@ public class DBmanager {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query);
-             FileWriter writer = new FileWriter(filename)) {
+             FileWriter writer = new FileWriter(filename, StandardCharsets.UTF_8)) {
 
             writer.append("ID,Όνομα,Κατηγορία,Ποσότητα,Τιμή\n");
 

@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -374,7 +375,8 @@ public class Main {
             if (usrSelection == JFileChooser.APPROVE_OPTION) {
                 java.io.File file = fileChooser.getSelectedFile();
 
-                try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(file))) {
+                try (java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(file,
+                        StandardCharsets.UTF_8))) {
                     String line;
                     Boolean isHeader = true;
                     int importedCount = 0;
