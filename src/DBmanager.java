@@ -178,6 +178,15 @@ public class DBmanager {
         return products;
     }
 
+    private String escapeCSV(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            value = value.replace("\"", "\"\"");
+            return "\"" + value + "\"";
+        }
+        return value;
+    }
+
     //γράψιμο αρχείου (εξαγωγή)
     public void exportToCSV(String filename) {
         String query = "SELECT products.*, categories.name AS category_name " +
@@ -197,8 +206,8 @@ public class DBmanager {
                 if (catName == null) catName = "Χωρίς Κατηγορία";
 
                 writer.append(rs.getInt("id") + ",");
-                writer.append(rs.getString("name") + ",");
-                writer.append(catName + ",");
+                writer.append(escapeCSV(rs.getString("name"))).append(",");
+                writer.append(escapeCSV(catName)).append(",");
                 writer.append(rs.getInt("quantity") + ",");
                 writer.append(rs.getDouble("price") + "\n");
                 count++;

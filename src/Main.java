@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -13,7 +14,7 @@ public class Main {
         JTextField userField = new JTextField("root");
         JPasswordField passField = new JPasswordField("");
 
-        JPanel loginpanel = new JPanel(new java.awt.GridLayout(4,2,5,5));
+        JPanel loginpanel = new JPanel(new GridLayout(4,2,5,5));
         loginpanel.add(new JLabel("Server (IP:PORT):"));
         loginpanel.add(hostField);
         loginpanel.add(new JLabel("Όνομα Βάσης (DB):"));
@@ -84,8 +85,8 @@ public class Main {
         table.setAutoCreateRowSorter(true);
         table.getTableHeader().setReorderingAllowed(false);
 
-        javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
 
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
@@ -381,11 +382,10 @@ public class Main {
                     while ((line = br.readLine()) != null) {
                         if (isHeader) {
                             isHeader = false;
-                            Thread.dumpStack();
                             continue;
                         }
 
-                        String[] parts = line.split(",");
+                        String[] parts = parseCSVLine(line);
                         if (parts.length >= 5) {
                             String name = parts[1].trim();
                             String catName = parts[2].trim();
@@ -419,5 +419,39 @@ public class Main {
         });
 
         frame.setVisible(true);
+    }
+
+    private static String[] parseCSVLine(String line) {
+        List<String> result = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (int i = 0; i < line.length(); i++){
+            char c = line.charAt(i);
+
+            if (inQuotes) {
+               if (c == '"') {
+                   if (i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                       current.append('"');
+                       i++;
+                   } else {
+                       inQuotes = false;
+                   }
+               } else {
+                   current.append(c);
+               }
+            } else {
+                if (c == '"') {
+                    inQuotes = true;
+                } else if (c == ',') {
+                    result.add(current.toString());
+                    current.setLength(0);
+                } else {
+                    current.append(c);
+                }
+            }
+        }
+        result.add(current.toString());
+        return result.toArray(new String[0]);
     }
 }
